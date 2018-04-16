@@ -15,6 +15,8 @@ addButton.addEventListener('click', function () {
         'task': task,
         'time': currentTime(),
     }
+    todoList.push(todo)
+    saveTodos()
     inserTodo(todo)
 })
 var currentTime = function () {
@@ -63,7 +65,11 @@ todoContainer.addEventListener('click', function (event) {
         toggleStatus
     } else if(target.classList.contains('todo-delete')) { //是删除按钮触发的事件
         log('delete button trigger click event')
-
+        //从todoList中删除该todo
+        var index = indexOfElement(target.parentElement)
+        log('todoList remove index', index)
+        todoList.splice(index, 1)
+        saveTodos()
         //从HTML中删除该todo
         var todoCell = target.parentElement
         todoCell.remove()
@@ -80,4 +86,32 @@ var toggleClass = function (element, className) {
     } else {
         element.classList.add(className)
     }
+}
+var indexOfElement = function (element) {
+    var parent = element.parentElement
+    for (var i = 0; i < parent.children.length; i++) {
+        var e = parent.children[i]
+        if (e === element) {
+            return i
+        }
+    }
+}
+
+
+var saveTodos = function () {
+    var s = JSON.stringify(todoList)
+    localStorage.todoList = s
+}
+var loadTodos = function () {
+    if (localStorage.todoList) {
+        var s = localStorage.todoList
+        return JSON.parse(s)
+    }
+    return []
+}
+//程序加载后，加载localstorage中的todo到页面中
+todoList = loadTodos()
+for (var i = 0; i < todoList.length; i++) {
+    var todo = todoList[i]
+    inserTodo(todo)
 }
