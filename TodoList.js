@@ -14,6 +14,7 @@ addButton.addEventListener('click', function () {
     var todo = {
         'task': task,
         'time': currentTime(),
+        'finished': false,
     }
     todoList.push(todo)
     saveTodos()
@@ -37,8 +38,13 @@ var inserTodo = function (todo) {
     todoContainer.insertAdjacentHTML('beforeend', t)
 }
 var templateTodo = function (todo) {
+    if (todo.finished) {
+        var status = 'done'
+    } else {
+        var status = ''
+    }
     var t = `
-        <div class="todo-cell">
+        <div class="todo-cell ${status}">
             <button class="todo-done">完成</button>
             <button class="todo-delete">删除</button>
             <button class="todo-edit">编辑</button>
@@ -62,7 +68,8 @@ todoContainer.addEventListener('click', function (event) {
         log('done button trigger click event')
         var todoCell = target.parentElement
         toggleClass(todoCell, 'done')
-        toggleStatus
+        toggleStatus(todoCell)
+        saveTodos()
     } else if(target.classList.contains('todo-delete')) { //是删除按钮触发的事件
         log('delete button trigger click event')
         //从todoList中删除该todo
@@ -85,6 +92,14 @@ var toggleClass = function (element, className) {
         element.classList.remove(className)
     } else {
         element.classList.add(className)
+    }
+}
+var toggleStatus = function (element) {
+    var index = indexOfElement(element)
+    if (todoList[index].finished) {
+        todoList[index].finished = false
+    } else {
+        todoList[index].finished = true
     }
 }
 var indexOfElement = function (element) {
